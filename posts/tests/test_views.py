@@ -21,6 +21,11 @@ class PostsPagesTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+        cls.uploaded_image = SimpleUploadedFile(name='image.gif',
+                                                content=ts.IMAGE,
+                                                content_type='image/gif'
+                                                )
         cls.group = Group.objects.create(
             title=ts.GROUP_1_TITLE,
             slug=ts.GROUP_1_SLUG,
@@ -38,19 +43,6 @@ class PostsPagesTests(TestCase):
         super().tearDownClass()
 
     def setUp(self):
-        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
-        self.image = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
-        self.uploaded_image = SimpleUploadedFile(name='image.gif',
-                                                 content=self.image,
-                                                 content_type='image/gif'
-                                                 )
         self.guest_client = Client()
         self.writer = User.objects.create_user(username=ts.WRITER)
         self.reader = User.objects.create_user(username=ts.READER)
@@ -81,7 +73,7 @@ class PostsPagesTests(TestCase):
         post = Post.objects.create(text='Тестовый текст ',
                                    author=self.writer,
                                    group=self.group,
-                                   image=self.uploaded_image,)
+                                   image=PostsPagesTests.uploaded_image,)
         self.reader.saved_posts.add(post)
         self.posts.append(post)
         self.first_post_id = self.posts[0].id

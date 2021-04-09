@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -17,6 +18,11 @@ class PostCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+        cls.uploaded_image = SimpleUploadedFile(name='image.gif',
+                                                content=ts.IMAGE,
+                                                content_type='image/gif'
+                                                )
         cls.group = Group.objects.create(
             title=ts.GROUP_1_TITLE,
             slug=ts.GROUP_1_SLUG,
@@ -29,19 +35,6 @@ class PostCreateFormTests(TestCase):
         super().tearDownClass()
 
     def setUp(self):
-        settings.MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
-        self.image = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
-        self.uploaded_image = SimpleUploadedFile(name='image.gif',
-                                                 content=self.image,
-                                                 content_type='image/gif'
-                                                 )
         self.writer = User.objects.create_user(username=ts.WRITER)
         self.writer_client = Client()
         self.writer_client.force_login(self.writer)
@@ -61,7 +54,7 @@ class PostCreateFormTests(TestCase):
         form_data = {
             'group': group.pk,
             'text': 'Тестовый текст',
-            'image': self.uploaded_image,
+            'image': PostCreateFormTests.uploaded_image,
         }
         response = self.writer_client.post(
             reverse('new_post'),
@@ -112,7 +105,6 @@ class PostCreateFormTests(TestCase):
             response = self.writer_client.get(self.EDIT_POST_URL)
             form = response.context['form']
             data = form.initial
-            print(form.initial)
             data['text'] = 'Новый текст'
             response = self.writer_client.post(self.EDIT_POST_URL, data)
             self.assertEqual(Post.objects.count(), posts_count)
