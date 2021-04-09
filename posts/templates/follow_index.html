@@ -1,0 +1,11 @@
+{% extends "base.html" %} 
+{% block title %}Последние записи{% endblock %}
+{% block header %}  
+{% include "tabs.html" %} 
+{% endblock %} 
+{% block content %}  
+{% for post in page %} 
+    {% include "post_item.html" with post=post %}
+{% endfor%}
+{% include "paginator.html" %}  
+{% endblock %}

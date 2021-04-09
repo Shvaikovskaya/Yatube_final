@@ -1,0 +1,19 @@
+{% extends "base.html" %}  
+<title>{% block title %}Записи сообщества {{group.title}} {% endblock %} | Yatube</title>
+{% block header %} 
+{% include "tabs.html" %} 
+<h2> {{group.title}}</h2>
+    <p>{{group.description|linebreaksbr}}</p>   
+{% endblock %}
+{% block content %}    
+    {% if page|length == 0 %}
+        <h3>
+            Здесь еще никто ничего не написал, вы можете быть первым
+        </h3>     
+    {% else %} 
+        {% for post in page %}   
+            {% include "post_item.html" with post=post %}    
+        {% endfor%}
+        {% include "paginator.html" %}
+    {% endif %}
+{% endblock %}

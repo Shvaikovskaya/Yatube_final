@@ -1,0 +1,10 @@
+{% extends "base.html" %} 
+<title>{% block title %}Об авторе{{author.get_full_name}} {% endblock %}</title>
+{% block header %}
+    <h1>Технологии</h1>        
+    <br>
+    <hr>
+{% endblock %}
+{% block content %}    
+Здесь будут перечислены технологии, которые использовались для создания проекта
+{% endblock %}

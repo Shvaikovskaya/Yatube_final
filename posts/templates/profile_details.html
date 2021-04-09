@@ -1,0 +1,19 @@
+<div class="col-md-3 mb-3 mt-1">  
+    <div class="h3">
+        {{author.get_full_name}}
+        {% if user.is_authenticated %}
+            {% if not user.username == author.username %}
+                {% if following > 0 %}
+                    <a class="btn btn-secondary btn-sm" href="{% url 'profile_unfollow' author.username %}" role="button"> <i class="bi-person-dash"></i> </a>
+                {% else %}
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile_follow' author.username %}" role="button"> <i class="bi-person-plus"></i> </a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>    
+
+Всего записей : {{posts_count}}<br>
+Подписчиков : {{following_count}}<br>        
+Подписок : {{follower_count}}
+<br>           
+</div>

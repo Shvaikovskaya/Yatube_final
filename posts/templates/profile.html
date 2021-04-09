@@ -1,0 +1,24 @@
+{% extends "base.html" %} 
+<title>{% block title %}Записи пользователя {{author.get_full_name}} {% endblock %}</title>
+{% block header %}
+{% endblock %}
+{% block content %} 
+<main role="main" class="container">
+    <div class="row">
+        {% include "profile_details.html" with author=author %}        
+        <div class="col-md-9">
+            {% if page|length == 0 %}
+                <h3>
+                    Пользователь ещё ничего не написал
+                </h3>     
+            {% else %}              
+                {% load post_filters %} 
+                {% for post in page %}   
+                    {% include "post_item.html" with post=post %}
+                {% endfor%}   
+                {% include "paginator.html" %} 
+            {% endif %} 
+        </div>
+    </div>
+</main> 
+{% endblock %}

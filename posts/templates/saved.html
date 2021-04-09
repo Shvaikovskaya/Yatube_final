@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Сохранённое{% endblock %}
+{% block header %}
+{% include "tabs.html" %} 
+{% endblock %}
+{% block content %}     
+{% load post_filters %}
+    {% if page|length == 0 %}
+        <h3>
+            Вы ничего не сохранили
+        </h3>     
+    {% endif %} 
+    {% for post in page %}
+        {% include "post_item.html" with post=post %}      
+    {% endfor %}
+{% include "paginator.html" %}
+{% endblock %}

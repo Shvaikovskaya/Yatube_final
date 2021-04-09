@@ -1,0 +1,17 @@
+
+{% extends "base.html" %} 
+<title>{% block title %}{{post.title}}{% endblock %}</title>
+{% block header %}
+{% endblock %}
+{% block content %} 
+<main role="main" class="container">
+    <div class="row">
+        {% include "profile_details.html" with author=post.author %}
+        <div class="col-md-9"> 
+            {% load post_filters %}   
+            {% include "post_item.html" with post=post %} 
+            {% include "comments.html" %}
+        </div>
+    </div>
+</main> 
+{% endblock %}

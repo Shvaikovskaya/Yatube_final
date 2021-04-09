@@ -1,0 +1,50 @@
+{% load post_filters %} 
+<div class="card mb-3 mt-1 shadow-sm">
+    {% load thumbnail %}
+    {% thumbnail post.image "800x339" crop="center" upscale=True as im %}
+        <img class="card-img" src="{{ im.url }}">
+    {% endthumbnail %}
+        <div class="card-body">    
+            <h4> 
+                {% if not author %}  
+                    <a href="{% url 'profile' post.author.username %}">{{ post.author.get_full_name }}</a> 
+                {% endif %}     
+                {% if not post.group is None %}
+                        в сообществе <a href="{% url 'group_posts' post.group.slug %}"> {{ post.group.title }} </a>  
+                {% endif %} 
+                {{ post.pub_date|date:"d M Y" }}</h4>
+                {% if query %}           
+                    <p>{{ post.text|linebreaksbr|search_result:query }}</p>   
+                    <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a>   
+                {% else %}
+                    <p>{{ post.text|post_preview}}</p>        
+                    <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a> 
+                {% endif %}
+                {% if user.is_authenticated %} 
+                    {% if user.username == post.author.username %}
+                        <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post_edit' user.username post.id %}" role="button"> <i class="bi-pencil-square"></i> </a>             
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" autocomplete="on" data-target="#DeleteConfirmation"><i class="bi-trash"></i></button> 
+                            <div class="modal fade" id="DeleteConfirmation" role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">                       
+                                        <div class="modal-body">
+                                            <h4>Удалить публикацию?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'post_delete' user.username post.id %}" role="button"> <i class="bi-trash"></i> </a> 
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal"><i class="bi-x"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                    {% else %}             
+                        {% if not user|post_saved:post.id %}
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'save_post' post.id %}" role="button"> <i class="bi-bookmark"></i> </a>
+                        {% else %}             
+                            <a class="btn btn-secondary btn-sm" href="{% url 'remove_post' post.id %}" role="button"> <i class="bi-bookmark"></i> </a>
+                        {% endif %}                    
+                    {% endif %} 
+                {% endif %} 
+                
+    </div>
+    </div>

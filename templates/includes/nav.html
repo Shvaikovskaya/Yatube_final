@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-faded" style="background-color: #e3f2fd;">       
+    <a class="navbar-brand"  href="/"><span style="color:red">Ya</span>tube</a>  
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-content" 
+        aria-controls="nav-content" aria-expanded="false" aria-label="Переключатель навигации">
+        <span class="navbar-toggler-icon"></span>
+    </button>  
+    <div class="collapse navbar-collapse" id="nav-content">  
+        {% if user.is_authenticated %} 
+        <div class="dropdown show">
+            <a class="nav-link dropdown-toggle" href="#"  id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.get_full_name }}</a>          
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink"> 
+                <a class="dropdown-item" href="{% url 'profile' user.username %}">Профиль</a>
+                <a class="dropdown-item" href="{% url 'password_change' %}">Изменить пароль</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a> 
+            </div>
+        </div>   
+        {% else %}
+        <div class="dropdown show">
+            <a class="nav-link dropdown-toggle" href="#"  id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Авторизация
+            </a>          
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
+              <a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a>
+            </div>
+        </div>   
+        {% endif %}  
+       <ul class="navbar-nav mr-auto ">
+        {% if user.is_authenticated %}
+            {% if group %}
+                <a class="btn btn-primary btn-sm" href="{% url 'new_group_post' group.slug %}?next={% url 'group_posts' group.slug %}" 
+                role="button" style="float: right;"> <i class="bi-pencil"> Новая запись в сообществе </i></a>    
+            {% elif groups %}
+                <a class="btn btn-primary btn-sm" href="{% url 'new_group' %}" role="button" style="float: right;"> <i class="bi-pencil"> Новое сообщество </i></a>
+            {% else %}
+                <a class="btn btn-primary btn-sm" href="{% url 'new_post' %}" role="button" style="float: right;"> <i class="bi-pencil"> Новая запись </i></a>
+            {% endif %}            
+       {% endif %}  
+         </ul>   
+        <form class="form-inline" role="search" action="{% url 'search' %}" method="get">
+            {% for field in search_form %}                               
+                {{ field }}
+            {% endfor %} 
+            <button type="submit" class="btn btn-link">Найти</button>
+        </form>        
+    </div>
+</nav>
+
+ 

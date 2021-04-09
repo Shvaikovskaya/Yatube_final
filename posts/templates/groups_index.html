@@ -1,0 +1,24 @@
+{% extends "base.html" %}  
+<title>{% block title %}Сообщества {% endblock %} | Yatube</title>
+{% block header %}  
+{% include "tabs.html" %} 
+{% endblock %}
+{% block content %}    
+    {% if groups|length == 0 %}
+        <h3>
+            Сообщества еще не созданы
+        </h3>     
+    {% else %} 
+        <div class="row  justify-content-center" style="align-items: flex-start;">
+            {% for item in groups %} 
+            {% if item.posts.count >= 10 %}           
+                <a href="{% url 'group_posts' item.slug %}" class="h2">&ensp;{{item.title }}&ensp;</a>
+            {% elif item.posts.count >= 1 %}           
+                <a href="{% url 'group_posts' item.slug %}" class="h4">&ensp;{{item.title }}&ensp;</a>
+            {% else %} 
+                <a href="{% url 'group_posts' item.slug %}"  >&ensp;{{item.title }}&ensp;</a>
+            {% endif %} 
+            {% endfor%}
+        </div>
+  {% endif %} 
+{% endblock %}
