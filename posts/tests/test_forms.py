@@ -98,16 +98,15 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertRedirects(response, ts.GROUP_1_URL)
 
-        def test_edit_post(self):
-            '''При редактировании через форму меняется запись'''
-            posts_count = Post.objects.count()
-            response = self.writer_client.get(self.EDIT_POST_URL)
-            form = response.context['form']
-            data = form.initial
-            data['text'] = 'Новый текст'
-            response = self.writer_client.post(self.EDIT_POST_URL, data)
-            self.assertEqual(Post.objects.count(), posts_count)
-            response = self.writer_client.get(self.EDIT_POST_URL)
-            self.assertContains(response, 'Новый текст')
-            self.assertEqual(response.context['form'].initial['text'],
-                             'Новый текст')
+    def test_edit_post(self):
+        '''При редактировании через форму меняется запись'''
+        posts_count = Post.objects.count()
+        response = self.writer_client.get(self.EDIT_POST_URL)
+        form = response.context['form']
+        data = form.initial
+        data['text'] = 'Новый текст'
+        data['image'] = ''
+        response = self.writer_client.post(self.EDIT_POST_URL, data)
+        self.assertEqual(Post.objects.count(), posts_count)
+        post = Post.objects.get(id=self.post.id)
+        self.assertEqual(post.text, 'Новый текст')
