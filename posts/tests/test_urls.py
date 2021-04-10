@@ -38,35 +38,35 @@ class PostURLTests(TestCase):
                               user=self.reader)
         self.posts = []
         for i in range(4):
-            post = Post.objects.create(text=f'Тестовый текст {i}',
+            post = Post.objects.create(text=f"Тестовый текст {i}",
                                        author=self.writer,
                                        group=self.group,
                                        )
             self.posts.append(post)
         self.first_post_id = self.posts[0].id
         self.last_post_id = self.posts[-1].id
-        self.SAVE_POST_URL = reverse('save_post',
-                                     kwargs={'post_id': self.last_post_id})
-        self.REMOVE_POST_URL = reverse('remove_post',
-                                       kwargs={'post_id': self.last_post_id})
-        self.DELETE_POST_URL = reverse('post_delete',
-                                       kwargs={'username': ts.WRITER,
-                                               'post_id': self.first_post_id})
-        self.EDIT_POST_URL = reverse('post_edit',
-                                     kwargs={'username': ts.WRITER,
-                                             'post_id': self.first_post_id})
-        self.COMMENT_POST_URL = reverse('add_comment',
-                                        kwargs={'username': ts.WRITER,
-                                                'post_id': self.first_post_id})
-        self.POST_URL = reverse('post',
-                                kwargs={'username': ts.WRITER,
-                                        'post_id': self.first_post_id})
+        self.SAVE_POST_URL = reverse("save_post",
+                                     kwargs={"post_id": self.last_post_id})
+        self.REMOVE_POST_URL = reverse("remove_post",
+                                       kwargs={"post_id": self.last_post_id})
+        self.DELETE_POST_URL = reverse("post_delete",
+                                       kwargs={"username": ts.WRITER,
+                                               "post_id": self.first_post_id})
+        self.EDIT_POST_URL = reverse("post_edit",
+                                     kwargs={"username": ts.WRITER,
+                                             "post_id": self.first_post_id})
+        self.COMMENT_POST_URL = reverse("add_comment",
+                                        kwargs={"username": ts.WRITER,
+                                                "post_id": self.first_post_id})
+        self.POST_URL = reverse("post",
+                                kwargs={"username": ts.WRITER,
+                                        "post_id": self.first_post_id})
 
     def tearDown(self):
         cache.clear()
 
     def test_urls_exist_at_desired_location(self):
-        '''Проверка доступности адресов любому пользователю.'''
+        """Проверка доступности адресов любому пользователю."""
         urls = (ts.INDEX_URL,
                 ts.GROUPS_INDEX_URL,
                 ts.GROUP_1_URL,
@@ -80,7 +80,7 @@ class PostURLTests(TestCase):
                 self.assertEqual(response.status_code, 200)
 
     def test_urls_exist_at_desired_location_authorized(self):
-        '''Проверка доступности адресов авторизованному пользователю.'''
+        """Проверка доступности адресов авторизованному пользователю."""
         reverse_names = (ts.NEW_GROUP_POST_URL,
                          ts.NEW_POST_URL,
                          ts.NEW_GROUP_URL,
@@ -94,9 +94,9 @@ class PostURLTests(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_exist_at_desired_location_authorized_not_author(self):
-        '''Проверка перенаправления авторизованного пользователя
+        """Проверка перенаправления авторизованного пользователя
             не автора поста
-        '''
+        """
         reverse_names = (self.EDIT_POST_URL,
                          self.DELETE_POST_URL,
                          )
@@ -106,10 +106,10 @@ class PostURLTests(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
     def test_urls_redirect_at_desired_location_authorized(self):
-        '''
+        """
             Проверка перенаправления авторизованного пользователю
             после изменения поста.
-        '''
+        """
         reverse_names = (self.DELETE_POST_URL,
                          self.SAVE_POST_URL,
                          self.REMOVE_POST_URL,
@@ -121,7 +121,7 @@ class PostURLTests(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
     def test_urls_redirect_at_desired_location(self):
-        '''Проверка перенаправления анонимного пользователя.'''
+        """Проверка перенаправления анонимного пользователя."""
         reverse_names = (ts.NEW_POST_URL,
                          ts.NEW_GROUP_POST_URL,
                          ts.NEW_GROUP_URL,
@@ -138,16 +138,16 @@ class PostURLTests(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
     def test_urls_uses_correct_template(self):
-        '''URL-адрес использует соответствующий шаблон.'''
-        templates_url_names = {ts.INDEX_URL: 'index.html',
-                               ts.NEW_POST_URL: 'new_post.html',
-                               ts.NEW_GROUP_URL: 'new_group.html',
-                               self.EDIT_POST_URL: 'new_post.html',
-                               ts.GROUP_1_URL: 'group.html',
-                               ts.PROFILE_URL: 'profile.html',
-                               ts.FOLLOW_INDEX_URL: 'follow_index.html',
-                               ts.GROUPS_INDEX_URL: 'groups_index.html',
-                               ts.SAVED_POSTS_URL: 'saved.html',
+        """URL-адрес использует соответствующий шаблон."""
+        templates_url_names = {ts.INDEX_URL: "index.html",
+                               ts.NEW_POST_URL: "new_post.html",
+                               ts.NEW_GROUP_URL: "new_group.html",
+                               self.EDIT_POST_URL: "new_post.html",
+                               ts.GROUP_1_URL: "group.html",
+                               ts.PROFILE_URL: "profile.html",
+                               ts.FOLLOW_INDEX_URL: "follow_index.html",
+                               ts.GROUPS_INDEX_URL: "groups_index.html",
+                               ts.SAVED_POSTS_URL: "saved.html",
                                }
         for reverse_name, template in templates_url_names.items():
             with self.subTest():
@@ -155,6 +155,6 @@ class PostURLTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_non_existent_url_return_404(self):
-        '''Возвращает код 404, если страница не найдена.'''
+        """Возвращает код 404, если страница не найдена."""
         response = self.guest_client.get(ts.NON_EXISTENT_URL)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)

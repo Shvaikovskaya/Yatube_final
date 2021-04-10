@@ -11,9 +11,9 @@ class AboutURLTets(TestCase):
         cls.guest_client = Client()
 
     def test_urls_exist_at_desired_location(self):
-        '''Проверка доступности адресов любому пользователю.'''
-        urls = ('/about/author/',
-                '/about/tech/',
+        """Проверка доступности адресов любому пользователю."""
+        urls = ("/about/author/",
+                "/about/tech/",
                 )
         for url in urls:
             with self.subTest():

@@ -12,10 +12,10 @@ class AboutPagesTests(TestCase):
         cls.guest_client = Client()
 
     def test_about_use_correct_template(self):
-        '''URL-адрес использует соответствующий шаблон.'''
+        """URL-адрес использует соответствующий шаблон."""
         templates_pages_names = {
-            'author.html': reverse('about:author'),
-            'tech.html': reverse('about:author'),
+            "author.html": reverse("about:author"),
+            "tech.html": reverse("about:author"),
         }
         for template, reverse_name in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
