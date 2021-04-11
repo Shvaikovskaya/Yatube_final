@@ -17,7 +17,7 @@
                     <p>{{ post.text|linebreaksbr|search_result:query }}</p>   
                     <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a>   
                 {% else %}
-                    <p>{{ post.text|post_preview}}</p>        
+                    <p>{{ post.text|linebreaksbr|hashtag}}</p>        
                     <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a> 
                 {% endif %}
                 {% if user.is_authenticated %} 

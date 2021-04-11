@@ -82,7 +82,7 @@ def new_post(request, slug=None):
 def new_group(request):
     """View-функция для создания нового сообщества."""
     context = {}
-    form = GroupForm(request.POST or None,)
+    form = GroupForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         form.save()
         if "next" in request.GET:
@@ -158,6 +158,15 @@ def post_search(request):
         posts = Post.objects.all()
     context = add_paginator_to_context(request, posts)
     context["query"] = query
+    context["index"] = True
+    return render(request, "index.html", context)
+
+
+def hashtag_search(request, hashtag):
+    """View-функция для поиска по хэштегам."""
+    posts = Post.objects.filter(text__icontains="#" + hashtag)
+    context = add_paginator_to_context(request, posts)
+    context["hashtag"] = hashtag
     context["index"] = True
     return render(request, "index.html", context)
 

@@ -37,12 +37,12 @@
             {% endif %}            
        {% endif %}  
          </ul>   
-        <form class="form-inline" role="search" action="{% url 'search' %}" method="get">
+       <form class="form-inline" role="search" action="{% url 'search' %}" method="get">
             {% for field in search_form %}                               
                 {{ field }}
             {% endfor %} 
             <button type="submit" class="btn btn-link">Найти</button>
-        </form>        
+        </form>      
     </div>
 </nav>
 

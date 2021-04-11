@@ -50,9 +50,10 @@ class PostCreateFormTests(TestCase):
             content=ts.IMAGE,
             content_type="image/gif"
         )
+        new_text = "Новый тестовый текст"
         form_data = {
             "group": group.pk,
-            "text": "Тестовый текст",
+            "text": new_text,
             "image": uploaded,
         }
         response = self.writer_client.post(
@@ -61,6 +62,9 @@ class PostCreateFormTests(TestCase):
             follow=True
         )
         self.assertEqual(Post.objects.count(), posts_count + 1)
+        post = Post.objects.first()
+        self.assertEqual(post.text, new_text)
+        self.assertEqual(post.group, group)
         self.assertRedirects(response, ts.INDEX_URL)
 
     def test_create_group(self):

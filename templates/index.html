@@ -4,13 +4,15 @@
 {% include "tabs.html" %} 
 <h2>  
 {% if query %}
-    Найдено по запросу: {{query}} 
+    Найдено по запросу: {{query}}  
+{% elif hashtag %} 
+    #{{hashtag}}      
 {% endif %}   
 </h2>  
 {% endblock %}
 {% block content %} 
 {% load cache %}
-{% cache 20 index_page %} 
+{% cache 0 index_page %} 
 {% for post in page %} 
     {% include "post_item.html" with post=post %}
 {% endfor%}  
