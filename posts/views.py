@@ -8,8 +8,8 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CommentForm, GroupForm, GroupPostForm, PostForm
-from .models import Follow, Group, Post, User
+from .forms import CommentForm, GroupForm, GroupPostForm, PostForm, ProfileForm
+from .models import Follow, Group, Post, Profile, User
 from .settings import PAGE_SIZE
 
 
@@ -114,6 +114,22 @@ def remove_post(request, post_id):
     if request.META.get("HTTP_REFERER"):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
     return redirect("saved_posts")
+
+
+@login_required
+def fill_profile(request, username):
+    """View функция для заполнения профиля пользователя."""
+    if request.user.username != username:
+        return redirect("profile", username=username)
+    user = get_object_or_404(User, username=username)
+    profile, _ = Profile.objects.get_or_create(user=user)
+    form = ProfileForm(request.POST or None,
+                       files=request.FILES or None,
+                       instance=profile)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("profile", username=username)
+    return render(request, "fill_profile.html", {"form": form})
 
 
 @login_required

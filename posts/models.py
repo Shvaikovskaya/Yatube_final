@@ -118,4 +118,32 @@ class Follow(models.Model):
         verbose_name_plural = "Подписки"
         constraints = [
             models.UniqueConstraint(fields=["user", "author"],
-                                    name="followed_author")]
+                                    name="followed_author")
+        ]
+
+
+class Profile(models.Model):
+    """Класс профиля пользователя"""
+    user = models.OneToOneField(User,
+                                verbose_name="Профиль",
+                                on_delete=models.CASCADE,
+                                related_name="profile")
+    location = models.CharField("Место",
+                                blank=True,
+                                null=True,
+                                max_length=200,
+                                help_text="Откуда ты?")
+    photo = models.ImageField(verbose_name="Фото",
+                              upload_to="posts/",
+                              blank=True,
+                              null=True,
+                              help_text="Загрузите фото.")
+    bio = models.TextField("О себе",
+                           blank=True,
+                           null=True,
+                           help_text="Напишите интересное о себе.")
+
+    class Meta:
+        """Мета-класс подписки."""
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профили"

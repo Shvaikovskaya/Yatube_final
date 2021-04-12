@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Comment, Group, Post
+from .models import Comment, Group, Post, Profile
 
 
 class SearchForm(forms.Form):
@@ -83,3 +83,11 @@ class CommentForm(forms.ModelForm):
         if len(data) == 0:
             raise forms.ValidationError("Нужно написать хоть что-то")
         return data
+
+
+class ProfileForm(forms.ModelForm):
+    """Форма профиля пользователя."""
+    class Meta():
+        """Мета-класс формы."""
+        model = Profile
+        fields = ("location", "photo", "bio",)

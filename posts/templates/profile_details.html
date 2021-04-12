@@ -1,19 +1,39 @@
-<div class="col-md-3 mb-3 mt-1">  
-    <div class="h3">
-        {{author.get_full_name}}
-        {% if user.is_authenticated %}
-            {% if not user.username == author.username %}
-                {% if following > 0 %}
-                    <a class="btn btn-secondary btn-sm" href="{% url 'profile_unfollow' author.username %}" role="button"> <i class="bi-person-dash"></i> </a>
-                {% else %}
-                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile_follow' author.username %}" role="button"> <i class="bi-person-plus"></i> </a>
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    </div>    
+<div class="col-md-3 mb-3 mt-1">    
+<div class="card">          
+    {% load thumbnail %}
+    {% thumbnail author.profile.photo "300x300" crop="center" upscale=True as im %}          
+    <img class="card-img" src="{{ im.url }}" >       
+    {% endthumbnail %} 
+    <div class="card-body">       
+            <div class="card-title">
+                {{author.get_full_name}}             
+                {% if user.is_authenticated %}
+                    {% if user.username == author.username %}
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'fill_profile' user.username %}" role="button"> <i class="bi-pencil-fill"></i> </a>
+                    {% else %}
+                        {% if following > 0 %}
+                            <a class="btn btn-secondary btn-sm" href="{% url 'profile_unfollow' author.username %}" role="button"> <i class="bi-person-dash"></i> </a>
+                        {% else %}
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile_follow' author.username %}" role="button"> <i class="bi-person-plus"></i> </a>
+                        {% endif %}
 
-Всего записей : {{posts_count}}<br>
-Подписчиков : {{following_count}}<br>        
-Подписок : {{follower_count}}
-<br>           
+                    {% endif %}
+                {% endif %}
+            </div>  
+            
+                <p class="card-text"> <i class="bi-geo-alt"></i> {{author.profile.location}} </p>
+            {% if author.profile.birthday %}
+            <p class="card-text">Дата рождения: {{author.profile.birthday}}</p>
+             {% endif %}   
+             {% if author.profile.bio %}         
+             <p class="card-text"> {{author.profile.bio}}</p>
+            {% endif %} 
+           
+        <div class="card-footer">        
+        Всего записей : {{posts_count}}<br>
+        Подписчиков : {{following_count}}<br>        
+        Подписок : {{follower_count}} 
+        </div>
+    </div>           
+</div>
 </div>
