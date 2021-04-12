@@ -189,12 +189,21 @@ def post_view(request, username, post_id):
     """функция для просмотра поста."""
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(Post, id=post_id, author=author)
+    user = request.user
     comments = post.comments.all()
     form = CommentForm()
+    editable = author == request.user
     context = {"author": author,
                "post": post,
                "comments": comments,
-               "form": form, }
+               "form": form,
+               "editable": editable}
+    following = author.following.filter(user__username=user.username).count()
+    context["following"] = following
+    context["following_count"] = author.following.count()
+    context["follower_count"] = author.follower.count()
+    context["posts_count"] = author.posts.count()
+
     return render(request, "post.html", context)
 
 

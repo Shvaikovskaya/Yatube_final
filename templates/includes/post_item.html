@@ -1,9 +1,12 @@
 {% load post_filters %} 
+
 <div class="card mb-3 mt-1 shadow-sm">
     {% load thumbnail %}
-    {% thumbnail post.image "800x339" crop="center" upscale=True as im %}
-        <img class="card-img" src="{{ im.url }}">
-    {% endthumbnail %}
+    {% thumbnail post.image "800x300" crop="center" upscale=True as im %} 
+        <a href="{{ post.image.url }}">
+            <img class="card-img" src="{{ im.url }}" >
+        </a>
+    {% endthumbnail %} 
         <div class="card-body">    
             <h4> 
                 {% if not author %}  
@@ -15,28 +18,21 @@
                 {{ post.pub_date|date:"d M Y" }}</h4>
                 {% if query %}           
                     <p>{{ post.text|linebreaksbr|search_result:query }}</p>   
-                    <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a>   
                 {% else %}
-                    <p>{{ post.text|linebreaksbr|hashtag}}</p>        
-                    <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a> 
-                {% endif %}
+                    <p>{{ post.text|linebreaksbr|hashtag}}</p>
+                {% endif %}        
+                
+                <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post' post.author.username post.id %}"  role="button"><i class="bi-book"></i> </a> 
                 {% if user.is_authenticated %} 
                     {% if user.username == post.author.username %}
-                        <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post_edit' user.username post.id %}" role="button"> <i class="bi-pencil-square"></i> </a>             
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" autocomplete="on" data-target="#DeleteConfirmation"><i class="bi-trash"></i></button> 
-                            <div class="modal fade" id="DeleteConfirmation" role="dialog">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">                       
-                                        <div class="modal-body">
-                                            <h4>Удалить публикацию?</h4>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'post_delete' user.username post.id %}" role="button"> <i class="bi-trash"></i> </a> 
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal"><i class="bi-x"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> 
+                        <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post_edit' user.username post.id %}" role="button">
+                             <i class="bi-pencil-square"></i> 
+                        </a>             
+                        <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'post_delete' user.username post.id %}" role="button" 
+                        onclick="return confirm('Удалить публикацию?');" >
+                             <i class="bi-trash"></i> 
+                        </a>   
+                     
                     {% else %}             
                         {% if not user|post_saved:post.id %}
                             <a class="btn btn-outline-secondary btn-sm" href="{% url 'save_post' post.id %}" role="button"> <i class="bi-bookmark"></i> </a>
@@ -48,3 +44,41 @@
                 
     </div>
     </div>
+
+ 
+<!-- Добавьте модальное окно после открывающего тега body-->
+<div class="modal fade" id="image-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Просмотр изображения</div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+         
+        </div>
+        <div class="modal-body">  
+           <img class="img-fluid" src=""  alt="">
+           
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+ 
+    
+    $(function() {     
+     
+      $('a.thumbnail').click(function(e) {
+        e.preventDefault();
+
+        $('#image-modal .modal-body img').attr('src', $(this).find('img').attr('src'));
+        $("#image-modal").modal('show');
+      });
+      $('#image-modal .modal-body img').on('click', function() {
+        $("#image-modal").modal('hide')
+      });
+    });
+    </script>
+ 
