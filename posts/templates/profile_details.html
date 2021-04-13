@@ -22,11 +22,9 @@
             </div>  
             
                 <p class="card-text"> <i class="bi-geo-alt"></i> {{author.profile.location}} </p>
-            {% if author.profile.birthday %}
-            <p class="card-text">Дата рождения: {{author.profile.birthday}}</p>
-             {% endif %}   
+              
              {% if author.profile.bio %}         
-             <p class="card-text"> {{author.profile.bio}}</p>
+             <p class="card-text"> {{author.profile.bio|linebreaksbr}}</p>
             {% endif %} 
            
         <div class="card-footer">        

@@ -51,7 +51,8 @@ class PostsPagesTests(TestCase):
 
         for i in range(3):
             post = Post.objects.create(text=f"Тестовый текст {i}",
-                                       author=self.writer,)
+                                       author=self.writer,
+                                       group=self.group_2,)
             self.posts.append(post)
         for i in range(6):
             post = Post.objects.create(text=f"Тестовый текст {i*10}",
@@ -151,8 +152,8 @@ class PostsPagesTests(TestCase):
         """Публикация с группой не появляется на странице другой группы."""
         reverse_name = ts.GROUP_2_URL
         response = self.reader_client.get(reverse_name)
-        last_post_index = response.context["page"].end_index()
-        self.assertEqual(last_post_index, 0)
+        self.assertNotIn(self.posts[-1],
+                         response.context["page"].object_list)
 
     def test_group_page_shows_correct_context(self):
         """Шаблоны страницы группы сформирован с

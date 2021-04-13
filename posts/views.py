@@ -4,13 +4,16 @@ from http import HTTPStatus
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, TextField
+from django.db.models.functions import Lower
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CommentForm, GroupForm, GroupPostForm, PostForm, ProfileForm
 from .models import Follow, Group, Post, Profile, User
 from .settings import PAGE_SIZE
+
+TextField.register_lookup(Lower, "lower")
 
 
 def add_paginator_to_context(request, posts):
@@ -168,8 +171,8 @@ def post_search(request):
         query = request.GET["query"]
         words = query.split()
         posts = Post.objects.filter(reduce(operator.or_,
-                                           (Q(text__icontains=word)
-                                            for word in words)))
+                                    (Q(text__iregex=r"(" + word + ")")
+                                     for word in words)))
     else:
         posts = Post.objects.all()
     context = add_paginator_to_context(request, posts)
@@ -180,7 +183,7 @@ def post_search(request):
 
 def hashtag_search(request, hashtag):
     """View-функция для поиска по хэштегам."""
-    posts = Post.objects.filter(text__icontains="#" + hashtag)
+    posts = Post.objects.filter(text__iregex=r"(" + f"#{hashtag}" + ")")
     context = add_paginator_to_context(request, posts)
     context["hashtag"] = hashtag
     context["index"] = True

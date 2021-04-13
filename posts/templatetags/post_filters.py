@@ -15,10 +15,13 @@ def post_saved(user, id):
 def search_result(text, query):
     words = query.split()
     for word in words:
-        text = text.replace(word,
-                            ("<span style='background: #D9FFAD'>"
-                             f"{word}"
-                             "</span>"))
+        new_word = ("<span style='background: #D9FFAD'>"
+                    f"{word}"
+                    "</span>")
+        text = re.sub(re.escape(word),
+                      new_word,
+                      text,
+                      flags=re.IGNORECASE)
     return mark_safe(text)
 
 

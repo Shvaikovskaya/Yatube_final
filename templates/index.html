@@ -12,7 +12,7 @@
 {% endblock %}
 {% block content %} 
 {% load cache %}
-{% cache 0 index_page %} 
+{% cache 0 sidebar index_page page.number %}
 {% for post in page %} 
     {% include "post_item.html" with post=post %}
 {% endfor%}  
