@@ -17,12 +17,22 @@
 <div class="media card mb-4">
     <div class="media-body card-body">
         <h5 class="mt-0">
+            
+            {% if user.is_authenticated %} 
+                    {% if user == item.author or user == item.post.author %}                                
+                        <a class="btn btn-outline-secondary btn-sm" aria-pressed="true" href="{% url 'delete_comment' username=item.post.author.username post_id=item.post.id id=item.id %}" role="button" 
+                        onclick="return confirm('Удалить коментарий?');" >
+                             <i class="bi-trash"></i> 
+                        </a>                   
+                    {% endif %} 
+             {% endif %} 
             <a href="{% url 'profile' item.author.username %}"
                name="comment_{{ item.id }}">
                 {{ item.author.username }}
-            </a>
+            </a> 
         </h5>
         <p>{{ item.text | linebreaksbr }}</p>
-    </div>
+            
+            </div>
 </div>
 {% endfor %}

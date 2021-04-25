@@ -119,3 +119,22 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count)
         response = self.writer_client.get(self.EDIT_POST_URL)
         self.assertEqual(response.context["post"].text, "Новый текст")
+
+    def test_not_create_with_not_image(self):
+        """Форма не отправляется, если загрузили не
+           картинку.
+        """
+        posts_count = Post.objects.count()
+        text = SimpleUploadedFile("test.txt", b"test")
+        form_data = {
+            "text": "Тестовый текст",
+            "image": text,
+        }
+        response = self.writer_client.post(
+            reverse("new_post"),
+            data=form_data,
+            follow=True
+        )
+        form = response.context["form"]
+        self.assertFalse(form.is_valid())
+        self.assertEqual(Post.objects.count(), posts_count)

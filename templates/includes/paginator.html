@@ -4,14 +4,14 @@
     {% if page.has_previous %}
     <li class="page-item">
       {% if query %}
-        <a class="page-link" href="?query={{ query }}&page={{ page.previous_page_number }}">&laquo; Предыдущая</a>
+        <a class="page-link" href="?query={{ query }}&page={{ page.previous_page_number }}"> <i class="bi-arrow-left-square"></i></a>
       {% else %}  
-        <a class="page-link" href="?page={{ page.previous_page_number }}">&laquo; Предыдущая</a>
+        <a class="page-link" href="?page={{ page.previous_page_number }}">  <i class="bi-arrow-left-square"></i></a>
       {% endif %}
     </li>
     {% else %}
     <li class="page-item disabled">
-      <span class="page-link">&laquo; Предыдущая</span>
+      <span class="page-link"> <i class="bi-arrow-left-square"></i></span>
     </li>
     {% endif %}
     {% for i in page.paginator.page_range %}
@@ -34,14 +34,14 @@
     {% if page.has_next %}
     <li class="page-item">
       {% if query %}  
-        <a class="page-link" href="?query={{ query }}&page={{ page.next_page_number }}">Следующая &raquo;</a>
+        <a class="page-link" href="?query={{ query }}&page={{ page.next_page_number }}"><i class="bi-arrow-right-square"></i> </a>
       {% else %} 
-        <a class="page-link" href="?page={{ page.next_page_number }}">Следующая &raquo;</a>
+        <a class="page-link" href="?page={{ page.next_page_number }}"><i class="bi-arrow-right-square"></i>  </a>
       {% endif %}    
     </li>
     {% else %}
     <li class="page-item disabled">
-      <span class="page-link">Следующая &raquo;</span>
+      <span class="page-link"><i class="bi-arrow-right-square"></i> </span>
     </li>
     {% endif %}
   </ul>

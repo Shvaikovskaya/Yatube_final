@@ -1,8 +1,8 @@
 <div class="col-md-3 mb-3 mt-1">    
-<div class="card">          
+<div class="card mb-3 mt-1">          
     {% load thumbnail %}
     {% thumbnail author.profile.photo "300x300" crop="center" upscale=True as im %}          
-    <img class="card-img" src="{{ im.url }}" >       
+    <img class="card-img img-thumbnail" src="{{ im.url }}" >       
     {% endthumbnail %} 
     <div class="card-body">       
             <div class="card-title">

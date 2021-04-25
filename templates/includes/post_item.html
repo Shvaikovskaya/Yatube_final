@@ -1,10 +1,10 @@
 {% load post_filters %} 
 
-<div class="card mb-3 mt-1 shadow-sm">
+<div class="card mb-3 mt-1 ">
     {% load thumbnail %}
     {% thumbnail post.image "800x300" crop="center" upscale=True as im %} 
         <a href="{{ post.image.url }}">
-            <img class="card-img" src="{{ im.url }}" >
+            <img class="card-img img-thumbnail" src="{{ im.url }}" >
         </a>
     {% endthumbnail %} 
         <div class="card-body">    
@@ -15,9 +15,16 @@
                 {% if not post.group is None %}
                         в сообществе <a href="{% url 'group_posts' post.group.slug %}"> {{ post.group.title }} </a>  
                 {% endif %} 
-                {{ post.pub_date|date:"d M Y" }}</h4>
+                {{ post.pub_date|date:"d M Y" }}  
+                
+                    {% if post.comments_count %}   
+                        {% if post.comments_count > 0 %}  
+                         + {{ post.comments_count }} 
+                        {% endif %} 
+                    {% endif %} 
+                </h4> 
                 {% if query %}           
-                    <p>{{ post.text|linebreaksbr|search_result:query }}</p>   
+                    <p>{{ post.text|linebreaksbr|hashtag|search_result:query }}</p>   
                 {% else %}
                     <p>{{ post.text|linebreaksbr|hashtag}}</p>
                 {% endif %}        

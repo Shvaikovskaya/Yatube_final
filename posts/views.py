@@ -4,16 +4,13 @@ from http import HTTPStatus
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q, TextField
-from django.db.models.functions import Lower
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CommentForm, GroupForm, GroupPostForm, PostForm, ProfileForm
-from .models import Follow, Group, Post, Profile, User
+from .models import Comment, Follow, Group, Post, Profile, User
 from .settings import PAGE_SIZE
-
-TextField.register_lookup(Lower, "lower")
 
 
 def add_paginator_to_context(request, posts):
@@ -25,7 +22,7 @@ def add_paginator_to_context(request, posts):
 
 def index(request):
     """View-функция для главной страницы."""
-    posts = Post.objects.all()
+    posts = Post.objects.all().annotate(comments_count=Count("comments"))
     context = add_paginator_to_context(request, posts)
     context["index"] = True
     return render(request, "index.html", context)
@@ -41,7 +38,7 @@ def groups_index(request):
 def group_posts(request, slug):
     """View-функция для страницы сообщества."""
     group = get_object_or_404(Group, slug=slug)
-    posts = group.posts.all()
+    posts = group.posts.all().annotate(comments_count=Count("comments"))
     context = add_paginator_to_context(request, posts)
     context["group"] = group
     return render(request, "group.html", context)
@@ -51,7 +48,7 @@ def group_posts(request, slug):
 def saved_posts(request):
     """View-функция для сохранённых публикаций."""
     user = request.user
-    posts = user.saved_posts.all()
+    posts = user.saved_posts.all().annotate(comments_count=Count("comments"))
     context = add_paginator_to_context(request, posts)
     context["saved"] = True
     return render(request, "saved.html", context)
@@ -174,7 +171,7 @@ def post_search(request):
                                     (Q(text__iregex=r"(" + word + ")")
                                      for word in words)))
     else:
-        posts = Post.objects.all()
+        posts = Post.objects.all().annotate(comments_count=Count("comments"))
     context = add_paginator_to_context(request, posts)
     context["query"] = query
     context["index"] = True
@@ -192,7 +189,7 @@ def hashtag_search(request, hashtag):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = author.posts.all()
+    posts = author.posts.all().annotate(comments_count=Count("comments"))
     user = request.user
     following = author.following.filter(user__username=user.username).count()
     context = add_paginator_to_context(request, posts)
@@ -243,6 +240,20 @@ def add_comment(request, username, post_id):
 
 
 @login_required
+def delete_comment(request, username, post_id, id):
+    """View-функция для удаления комментария."""
+    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, id=post_id, author=author)
+    comment = get_object_or_404(Comment, id=id, post=post)
+    if request.user != comment.author and request.user != author:
+        return redirect("post", username=username, post_id=post_id)
+    comment.delete()
+    if request.META.get("HTTP_REFERER"):
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    return redirect("index")
+
+
+@login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
     user = request.user
@@ -259,10 +270,7 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    user = request.user
-    follow = Follow.objects.get(author=author,
-                                user=user)
-    follow.delete()
+    request.user.follower.filter(author=author).delete()
     if request.META.get("HTTP_REFERER"):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
     return redirect("profile", username=username)
@@ -273,7 +281,8 @@ def follow_index(request):
     """View-функция для отображения подписок."""
     user = request.user
     following = user.follower.all().values_list("author")
-    posts = Post.objects.filter(author__in=following)
+    posts = (Post.objects.filter(author__in=following)
+                         .annotate(comments_count=Count("comments")))
     context = add_paginator_to_context(request, posts)
     context["follow"] = True
     return render(request, "follow_index.html", context)
