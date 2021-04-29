@@ -204,7 +204,10 @@ def profile(request, username):
 def post_view(request, username, post_id):
     """функция для просмотра поста."""
     author = get_object_or_404(User, username=username)
-    post = get_object_or_404(Post, id=post_id, author=author)
+    try:
+        post = Post.objects.get(id=post_id, author=author)
+    except Post.DoesNotExist:
+        return redirect("profile", username=username)
     user = request.user
     comments = post.comments.all()
     form = CommentForm()
