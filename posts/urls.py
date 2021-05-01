@@ -28,7 +28,7 @@ urlpatterns = [
     path("<str:username>/<int:post_id>/comment/<int:id>/delete/",
          views.delete_comment,
          name="delete_comment"),
-    path("<str:username>/",
+    path("<str:username>/profile/",
          views.profile,
          name="profile"),
     path("<str:username>/fill/",
